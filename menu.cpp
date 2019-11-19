@@ -41,10 +41,12 @@ void Menu::FillPlayerInfo(XMLDocument* doc)
 {
    XMLNode * xml_user = doc->FirstChild();
    int lvl;
+   if (xml_user == nullptr) return;
    XMLError eResult = xml_user->ToElement()->QueryIntAttribute("level", &lvl);
    XMLCheckResult(eResult);
 
    XMLElement* xml_units = xml_user->FirstChildElement("units");
+   if (xml_units == nullptr) return;
    XMLElement* xml_unit = xml_units->FirstChildElement("unit");
 
    std::vector<Unit> units;
@@ -60,6 +62,7 @@ void Menu::FillPlayerInfo(XMLDocument* doc)
    }
 
    XMLElement* xml_processes = xml_user->FirstChildElement("processes");
+   if (xml_processes == nullptr) return;
    XMLElement* xml_upgrade_unit = xml_processes->FirstChildElement("upgrade_unit");
 
    std::vector<Process> processes;
