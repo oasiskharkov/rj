@@ -22,17 +22,17 @@ inline std::string Unit::type() const
    return m_type;
 }
 
-void Unit::setType(const std::string& type)
+inline void Unit::setType(const std::string& type)
 {
    m_type = type;
 }
 
-int Unit::level() const
+inline int Unit::level() const
 {
    return m_level;
 }
 
-void Unit::setLevel(const int level)
+inline void Unit::setLevel(const int level)
 {
    m_level = level;
 }
