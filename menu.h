@@ -24,7 +24,7 @@ private:
    Menu(const Menu&) = delete;
    Menu& operator = (const Menu&) = delete;
    
-   void ShowXmlFileError(XMLError eResult, const std::string& fileName);
+   void XMLCheckResult(XMLError result);    
    void FillPlayerInfo(XMLDocument* doc);
 };
 

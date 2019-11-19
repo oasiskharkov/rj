@@ -23,25 +23,26 @@ void Menu::run()
       auto p = current_path();
       std::string resources_path = p.string() + "\\resources\\" + fileName;
       eResult = xmlDoc->LoadFile(resources_path.c_str());
-      if (eResult != 0)
-      {
-         ShowXmlFileError(eResult, fileName);
-      }
-   } while (eResult != 0);
+      XMLCheckResult(eResult);
+   } while (eResult != XML_SUCCESS);
 
    FillPlayerInfo(xmlDoc.get());
 }
 
-void Menu::ShowXmlFileError(XMLError eResult, const std::string& fileName)
+void Menu::XMLCheckResult(XMLError result)
 {
-   std::cout << "Error while loading " << fileName << " with error code: " << eResult << std::endl;
+   if (result != XML_SUCCESS)
+   {
+      std::cout << "XML error code: " << result << std::endl;
+   }
 }
 
 void Menu::FillPlayerInfo(XMLDocument* doc)
 {
    XMLNode * xml_user = doc->FirstChild();
    int lvl;
-   xml_user->ToElement()->QueryIntAttribute("level", &lvl);
+   XMLError eResult = xml_user->ToElement()->QueryIntAttribute("level", &lvl);
+   XMLCheckResult(eResult);
 
    XMLElement* xml_units = xml_user->FirstChildElement("units");
    XMLElement* xml_unit = xml_units->FirstChildElement("unit");
@@ -52,7 +53,7 @@ void Menu::FillPlayerInfo(XMLDocument* doc)
    {
       std::string type(xml_unit->Attribute("type"));
       int level;
-      xml_unit->QueryIntAttribute("level", &level);
+      eResult = xml_unit->QueryIntAttribute("level", &level);
       xml_unit = xml_unit->NextSiblingElement();
            
       units.emplace_back(Unit{ type, level });
