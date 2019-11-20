@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="condition.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="process.h" />
     <ClInclude Include="tinyxml2.h" />
@@ -122,6 +123,7 @@
     <ClInclude Include="user.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="condition.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="rj.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
