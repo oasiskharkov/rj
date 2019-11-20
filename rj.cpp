@@ -6,7 +6,7 @@ int main()
    {
       std::unique_ptr<Menu> menu(Menu::getInstance());
       menu->run();
-      const User user = menu->getUser();
+      menu->check();
    }
    catch (std::exception& ex)
    {
