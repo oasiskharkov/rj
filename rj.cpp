@@ -6,7 +6,15 @@ int main()
    {
       std::unique_ptr<Menu> menu(Menu::getInstance());
       menu->run();
-      menu->check();
+      
+      if (menu->check())
+      {
+         std::cout << "SUCCESS" << std::endl;
+      }
+      else
+      {
+         std::cout << "FAILURE" << std::endl;
+      }
    }
    catch (std::exception& ex)
    {
