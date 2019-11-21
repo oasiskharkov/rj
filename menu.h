@@ -21,18 +21,17 @@ public:
 private:
    static Menu* instance;
    User user;
-   std::queue<std::pair<bool, std::unique_ptr<Condition>>> conditions;
-
-
+   std::queue<std::pair<Condition::NodeType, std::unique_ptr<Condition>>> conditions;
+   
    Menu() = default;
    Menu(const Menu&) = delete;
    Menu& operator = (const Menu&) = delete;
-   
+      
    void xmlCheckResult(XMLError result);    
    void fillPlayerInfo(XMLDocument* doc);
    void fillConditions(XMLDocument* doc);
    void inputFileName(XMLDocument* doc, const std::string& invitation);
-
+   void addCondition(XMLNode* node, Condition::NodeType type, bool isNot = false);
 };
 
 inline const User& Menu::getUser() const

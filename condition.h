@@ -6,6 +6,7 @@ class Condition
 {
 public:
    enum ConditionType { USER_LEVEL_GREATER, UNIT_LEVEL_EQUALS, UNIT_UPGRADE_STARTED };
+   enum NodeType { AND, OR };
 public:
    Condition(bool no = false) : m_not{ no } {}
    
