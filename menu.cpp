@@ -48,14 +48,24 @@ void Menu::xmlCheckResult(XMLError result)
 
 void Menu::fillPlayerInfo(XMLDocument* doc)
 {
+   if (doc == nullptr)
+   {
+      throw std::exception("Unccorect XML document for player structure");
+   }
    XMLNode * xml_user = doc->FirstChild();
    int lvl;
-   if (xml_user == nullptr) return;
+   if (xml_user == nullptr)
+   {
+      throw std::exception("Unccorect XML node");
+   }
    XMLError eResult = xml_user->ToElement()->QueryIntAttribute("level", &lvl);
    xmlCheckResult(eResult);
 
    XMLElement* xml_units = xml_user->FirstChildElement("units");
-   if (xml_units == nullptr) return;
+   if (xml_units == nullptr)
+   {
+      throw std::exception("Unccorect XML element");
+   }
    XMLElement* xml_unit = xml_units->FirstChildElement("unit");
 
    std::vector<Unit> units;
@@ -65,13 +75,17 @@ void Menu::fillPlayerInfo(XMLDocument* doc)
       std::string type(xml_unit->Attribute("type"));
       int level;
       eResult = xml_unit->QueryIntAttribute("level", &level);
+      xmlCheckResult(eResult);
       xml_unit = xml_unit->NextSiblingElement();
            
       units.emplace_back(Unit{ type, level });
    }
 
    XMLElement* xml_processes = xml_user->FirstChildElement("processes");
-   if (xml_processes == nullptr) return;
+   if (xml_processes == nullptr)
+   {
+      throw std::exception("Unccorect XML element");
+   }
    XMLElement* xml_upgrade_unit = xml_processes->FirstChildElement("upgrade_unit");
 
    std::vector<Process> processes;
@@ -89,12 +103,106 @@ void Menu::fillPlayerInfo(XMLDocument* doc)
    user.setProcesses(processes);
 }
 
+void Menu::addCondition(XMLNode* node, bool isNot)
+{
+   XMLElement* elem = node->ToElement();
+   if (elem == nullptr)
+   {
+      throw std::exception("Uncorrect XML element");
+   }
+   XMLError eResult;
+
+   if (std::string(elem->Value()) == "user_level_gt")
+   {
+      int level;
+      eResult = elem->QueryIntAttribute("level", &level);
+      xmlCheckResult(eResult);
+      auto ptr = Condition::createCondition(Condition::ConditionType::USER_LEVEL_GREATER);
+      auto ulg = dynamic_cast<UserLevelGreater*>(ptr);
+      if(ulg != nullptr)
+      {
+         ulg->setNot(isNot);
+         ulg->setLevel(level);
+         conditions.emplace_back(std::unique_ptr<Condition>{ ulg });
+      }   
+   }
+   else if(std::string(elem->Value()) == "unit_level_eq")
+   {
+      std::string type(elem->Attribute("type"));
+      int level;
+      eResult = elem->QueryIntAttribute("level", &level);
+      xmlCheckResult(eResult);
+      auto ptr = Condition::createCondition(Condition::ConditionType::UNIT_LEVEL_EQUALS);
+      auto ule = dynamic_cast<UnitLevelEquals*>(ptr);
+      if (ule != nullptr)
+      {
+         ule->setNot(isNot);
+         ule->setType(type);
+         ule->setLevel(level);
+         conditions.emplace_back(std::unique_ptr<Condition>{ ule });
+      }
+   }
+   else if(std::string(elem->Value()) == "unit_upgrade_started")
+   {
+      std::string type(elem->Attribute("type"));
+      auto ptr = Condition::createCondition(Condition::ConditionType::UNIT_UPGRADE_STARTED);
+      auto uus = dynamic_cast<UnitUpgradeStarted*>(ptr);
+      if (uus != nullptr)
+      {
+         uus->setNot(isNot);
+         uus->setType(type);
+         conditions.emplace_back(std::unique_ptr<Condition>{ uus });
+      }
+   }
+   else if (std::string(elem->Value()) == "not")
+   {
+      addCondition(elem->FirstChild(), true);
+   }
+}
+
 void Menu::fillConditions(XMLDocument * doc)
 {
+   if (doc == nullptr) 
+   {
+      throw std::exception("Unccorect XML document for conditions");
+   }
 
+   auto conditions = doc->FirstChild();
+   if (conditions == nullptr)
+   {
+      throw std::exception("There are no conditions");
+   }
+   std::string root = conditions->Value();
+   if(root == "and" || root == "no")
+   {
+      type = root == "and" ? NodeType::AND : NodeType::OR;
+      auto condition = conditions->FirstChild();
+      while (condition != nullptr)
+      {
+         addCondition(condition);
+         condition = condition->NextSibling();
+      }
+   }
+   else
+   {
+      throw std::exception("Uncorrect root element for XML file with conditions");
+   }
 }
 
 bool Menu::check() const
 {
-   return false;
+   bool result = false;
+   
+   if (!conditions.empty())
+   {
+      bool result = conditions[0].get()->checkCondition(user);
+   }
+
+   for (size_t i = 1; i < conditions.size(); ++i)
+   {
+      bool newResult = conditions[i].get()->checkCondition(user);
+      type == NodeType::AND ? result = result && newResult : result = result || newResult;
+   }
+   
+   return result;
 }

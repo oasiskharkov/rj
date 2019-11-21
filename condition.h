@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "user.h"
 
 class Condition
 {
@@ -12,6 +13,8 @@ public:
    virtual ~Condition() = default;
    
    virtual ConditionType getType() const = 0;
+
+   virtual bool checkCondition(const User& user) = 0;
    
    static Condition* createCondition(ConditionType type);
    
@@ -39,10 +42,12 @@ public:
          throw std::logic_error("User level must have positive value.");
       }
    }
-   
+
    ConditionType getType() const override {
       return USER_LEVEL_GREATER; 
    }
+
+   bool checkCondition(const User& user) override;
 
    int level() const { 
       return m_level; 
@@ -52,6 +57,8 @@ public:
       m_level = level; 
    }
 private:
+   
+
    int m_level;
 };
 
@@ -72,6 +79,8 @@ public:
       return UNIT_LEVEL_EQUALS; 
    }
    
+   bool checkCondition(const User& user) override;
+
    std::string type() const { 
       return m_type; 
    }
@@ -102,6 +111,8 @@ public:
    ConditionType getType() const override { 
       return UNIT_UPGRADE_STARTED; 
    }
+
+   bool checkCondition(const User& user) override;
    
    std::string type() const { 
       return m_type; 

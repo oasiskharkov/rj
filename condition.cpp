@@ -13,3 +13,18 @@ Condition * Condition::createCondition(ConditionType type)
    }
    return nullptr;
 }
+
+bool UserLevelGreater::checkCondition(const User& user)
+{
+   return false;
+}
+
+bool UnitLevelEquals::checkCondition(const User & user)
+{
+   return false;
+}
+
+bool UnitUpgradeStarted::checkCondition(const User & user)
+{
+   return false;
+}
