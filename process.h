@@ -6,7 +6,6 @@ class Process
 {
 public:
    Process() = default;
-
    Process(const std::string& type) : m_type{ type } {}
 
    std::string type() const {

@@ -18,7 +18,6 @@ public:
 public:
    static Menu* getInstance();
    void run();
-   const User& getUser() const;
    bool check() const;
 private:
    static Menu* instance;
@@ -30,14 +29,9 @@ private:
    Menu(const Menu&) = delete;
    Menu& operator = (const Menu&) = delete;
       
-   void xmlCheckResult(XMLError result);    
+   bool xmlCheckResult(XMLError result);    
    void fillPlayerInfo(XMLDocument* doc);
    void fillConditions(XMLDocument* doc);
    void inputFileName(XMLDocument* doc, const std::string& invitation);
    void addCondition(XMLNode* node, bool isNot = false);
 };
-
-inline const User& Menu::getUser() const
-{
-   return user;
-}

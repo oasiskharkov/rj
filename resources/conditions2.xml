@@ -1,0 +1,11 @@
+<and>
+	<user_level_gt level="10"/>	
+	<unit_level_eq type="A" level="2"/>
+	<unit_level_eq type="B" level="3"/>
+	<unit_level_eq type="C" level="4"/>
+	<unit_upgrade_started type="A"/>
+	<unit_upgrade_started type="B"/>
+	<not>
+		<unit_upgrade_started type="C"/>
+	</not>
+</and>

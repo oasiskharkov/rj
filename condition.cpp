@@ -1,30 +1,56 @@
 #include "condition.h"
 
-Condition * Condition::createCondition(ConditionType type)
+UserLevelGreater::UserLevelGreater(const int level, bool no) :
+   Condition{ no },
+   m_level{ level }
 {
-   switch (type)
+   if (m_level < 1)
    {
-   case USER_LEVEL_GREATER:
-      return new UserLevelGreater;
-   case UNIT_LEVEL_EQUALS:
-      return new UnitLevelEquals;
-   case UNIT_UPGRADE_STARTED:
-      return new UnitUpgradeStarted;
+      throw std::logic_error("User level must have positive value.");
    }
-   return nullptr;
 }
 
 bool UserLevelGreater::checkCondition(const User& user)
 {
-   return false;
+   int userLevel = user.level();
+   return isNot() ? !(userLevel > m_level) : userLevel > m_level;
 }
 
-bool UnitLevelEquals::checkCondition(const User & user)
+UnitLevelEquals::UnitLevelEquals(const std::string& type, const int level, bool no) :
+   Condition{ no },
+   m_type{ type },
+   m_level{ level }
 {
-   return false;
+   if (level < 1)
+   {
+      throw std::logic_error("Unit level must have positive value.");
+   }
 }
 
-bool UnitUpgradeStarted::checkCondition(const User & user)
+bool UnitLevelEquals::checkCondition(const User& user)
 {
-   return false;
+   auto unit = std::find_if(std::begin(user.units()), std::end(user.units()),
+      [this](const Unit& u){ return this->type() == u.type(); });
+   if (unit == user.units().end())
+   {
+      throw std::logic_error("Can't find unit: " + m_type);
+   }
+   int unitLevel = unit->level();
+
+   return isNot() ? !(unitLevel == m_level) : unitLevel == m_level;
+}
+
+UnitUpgradeStarted::UnitUpgradeStarted(const std::string& type, bool no) :
+   Condition{ no },
+   m_type{ type } 
+{
+}
+
+bool UnitUpgradeStarted::checkCondition(const User& user)
+{
+   auto process = std::find_if(std::begin(user.processes()), std::end(user.processes()),
+      [this](const Process& p) { return this->type() == p.type(); });
+
+   bool result = process == user.processes().end() ? false : true;
+   return isNot() ? !result : result;
 }
