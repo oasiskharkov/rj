@@ -195,10 +195,11 @@ void Menu::fillConditions(XMLDocument * doc)
 bool Menu::check() const
 {
    bool result = false;
+   std::vector<std::string> errors;
    
    if (!conditions.empty())
    {
-      result = conditions[0].get()->checkCondition(user);
+      result = conditions[0].get()->checkCondition(user, errors);
    }
 
    for (size_t i = 1; i < conditions.size(); ++i)
@@ -208,8 +209,17 @@ bool Menu::check() const
          break;
       }
 
-      bool newResult = conditions[i].get()->checkCondition(user);
+      bool newResult = conditions[i].get()->checkCondition(user, errors);
       type == NodeType::AND ? result = result && newResult : result = result || newResult;
    }
+
+   if (!result)
+   {
+      for (const auto& error : errors)
+      {
+         std::cout << error << std::endl;
+      }
+   }
+
    return result;
 }

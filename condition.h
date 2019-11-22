@@ -10,7 +10,7 @@ public:
    Condition(bool no = false) : m_not{ no } {}
    virtual ~Condition() = default;
    
-   virtual bool checkCondition(const User& user) = 0;
+   virtual bool checkCondition(const User& user, std::vector<std::string>& errors) = 0;
    
    bool isNot() const {
       return m_not;
@@ -29,7 +29,7 @@ public:
    UserLevelGreater() = default;
    UserLevelGreater(const int level, bool no);
    
-   bool checkCondition(const User& user) override;
+   bool checkCondition(const User& user, std::vector<std::string>& errors) override;
    
    int level() const {
       return m_level;
@@ -48,7 +48,7 @@ public:
    UnitLevelEquals() = default;
    UnitLevelEquals(const std::string& type, const int level, bool no);
    
-   bool checkCondition(const User& user) override;
+   bool checkCondition(const User& user, std::vector<std::string>& errors) override;
 
    std::string type() const {
       return m_type;
@@ -76,7 +76,7 @@ public:
    UnitUpgradeStarted() = default;   
    UnitUpgradeStarted(const std::string& type, bool no);
    
-   bool checkCondition(const User& user) override;
+   bool checkCondition(const User& user, std::vector<std::string>& errors) override;
    
    std::string type() const { 
       return m_type; 

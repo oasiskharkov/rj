@@ -1,0 +1,11 @@
+<user level="5">
+	<units>
+		<unit type="A" level="4"/>
+		<unit type="B" level="3"/>
+		<unit type="C" level="4"/>
+	</units>
+	<processes>
+		<upgrade_unit type="A"/>
+		<upgrade_unit type="B"/>
+	</processes>
+</user>

@@ -10,10 +10,18 @@ UserLevelGreater::UserLevelGreater(const int level, bool no) :
    }
 }
 
-bool UserLevelGreater::checkCondition(const User& user)
+bool UserLevelGreater::checkCondition(const User& user, std::vector<std::string>& errors)
 {
    int userLevel = user.level();
-   return isNot() ? !(userLevel > m_level) : userLevel > m_level;
+   bool result = isNot() ? !(userLevel > m_level) : userLevel > m_level;
+   
+   std::string error = "User level " + std::to_string(userLevel) + " is not greater than " + std::to_string(m_level);
+   if (!result)
+   {
+      errors.emplace_back(error);
+   }
+   
+   return result;
 }
 
 UnitLevelEquals::UnitLevelEquals(const std::string& type, const int level, bool no) :
@@ -27,7 +35,7 @@ UnitLevelEquals::UnitLevelEquals(const std::string& type, const int level, bool 
    }
 }
 
-bool UnitLevelEquals::checkCondition(const User& user)
+bool UnitLevelEquals::checkCondition(const User& user, std::vector<std::string>& errors)
 {
    auto unit = std::find_if(std::begin(user.units()), std::end(user.units()),
       [this](const Unit& u){ return this->type() == u.type(); });
@@ -37,7 +45,15 @@ bool UnitLevelEquals::checkCondition(const User& user)
    }
    int unitLevel = unit->level();
 
-   return isNot() ? !(unitLevel == m_level) : unitLevel == m_level;
+   bool result = isNot() ? !(unitLevel == m_level) : unitLevel == m_level;
+   
+   std::string error = "Unit type " + unit->type() + " with level " + std::to_string(unit->level()) + " doesn't equal to " + std::to_string(m_level);
+   if (!result)
+   {
+      errors.emplace_back(error);
+   }
+
+   return result;
 }
 
 UnitUpgradeStarted::UnitUpgradeStarted(const std::string& type, bool no) :
@@ -46,11 +62,19 @@ UnitUpgradeStarted::UnitUpgradeStarted(const std::string& type, bool no) :
 {
 }
 
-bool UnitUpgradeStarted::checkCondition(const User& user)
+bool UnitUpgradeStarted::checkCondition(const User& user, std::vector<std::string>& errors)
 {
    auto process = std::find_if(std::begin(user.processes()), std::end(user.processes()),
       [this](const Process& p) { return this->type() == p.type(); });
 
    bool result = process == user.processes().end() ? false : true;
-   return isNot() ? !result : result;
+   std::string error = "Proccess for unit type " + m_type + " is not started";
+   result = isNot() ? !result : result;
+
+   if (!result)
+   {
+      errors.emplace_back(error);
+   }
+
+   return result;
 }
