@@ -25,5 +25,6 @@ int main()
       std::cout << "Something goes wrong!" << std::endl;
    }
    
+   system("pause");
    return 0;
 }

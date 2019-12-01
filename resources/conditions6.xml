@@ -1,0 +1,7 @@
+<or>
+	<user_level_gt level="8"/>	
+	<unit_level_eq type="A" level="5"/>
+	<unit_level_eq type="B" level="5"/>
+	<unit_level_eq type="C" level="6"/>
+	<unit_upgrade_started type="C"/>
+</or>
