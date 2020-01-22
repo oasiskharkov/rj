@@ -4,17 +4,15 @@ int main()
 {
    try
    {
-      std::unique_ptr<Menu> menu(Menu::getInstance());
-      menu->run();
-      
-      if (menu->check())
+      char key;
+      do
       {
-         std::cout << "SUCCESS" << std::endl;
-      }
-      else
-      {
-         std::cout << "FAILURE" << std::endl;
-      }
+         std::unique_ptr<Menu> menu{ new Menu };
+         menu->run();
+
+         std::cout << "\nDo you want to try again? Press any key to continue or 'n' to exit." << std::endl;
+         key = _getch();
+      } while (key != 'n');
    }
    catch (std::exception& ex)
    {

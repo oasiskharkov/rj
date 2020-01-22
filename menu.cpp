@@ -1,16 +1,5 @@
 #include "menu.h"
 
-Menu* Menu::instance = nullptr;
-
-Menu * Menu::getInstance()
-{
-   if (instance == nullptr)
-   {
-      instance = new Menu;
-   }
-   return instance;
-}
-
 void Menu::run()
 {
    std::unique_ptr<XMLDocument> playerStruct{ new XMLDocument };
@@ -21,6 +10,10 @@ void Menu::run()
 
    fillPlayerInfo(playerStruct.get());
    fillConditions(conditions.get());
+
+   check() ?
+      std::cout << "SUCCESS" << std::endl :
+         std::cout << "FAILURE" << std::endl;
 }
 
 void Menu::inputFileName(XMLDocument* xmlDoc, const std::string& invitation)

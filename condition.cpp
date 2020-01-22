@@ -67,7 +67,7 @@ bool UnitUpgradeStarted::checkCondition(const User& user, std::vector<std::strin
    auto process = std::find_if(std::begin(user.processes()), std::end(user.processes()),
       [this](const Process& p) { return this->type() == p.type(); });
 
-   bool result = process == user.processes().end() ? false : true;
+   bool result = !(process == user.processes().end());
    std::string error = "Proccess for unit type " + m_type + " is not started";
    result = isNot() ? !result : result;
 
